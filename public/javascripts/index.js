@@ -1,31 +1,20 @@
 $(document).ready(function () {
   var timeData = [],
-    temperatureData = [],
+    distanceData = [],
     humidityData = [];
   var data = {
     labels: timeData,
     datasets: [
       {
         fill: false,
-        label: 'Temperature',
-        yAxisID: 'Temperature',
+        label: 'Distance',
+        yAxisID: 'Distance',
         borderColor: "rgba(255, 204, 0, 1)",
         pointBoarderColor: "rgba(255, 204, 0, 1)",
         backgroundColor: "rgba(255, 204, 0, 0.4)",
         pointHoverBackgroundColor: "rgba(255, 204, 0, 1)",
         pointHoverBorderColor: "rgba(255, 204, 0, 1)",
-        data: temperatureData
-      },
-      {
-        fill: false,
-        label: 'Humidity',
-        yAxisID: 'Humidity',
-        borderColor: "rgba(24, 120, 240, 1)",
-        pointBoarderColor: "rgba(24, 120, 240, 1)",
-        backgroundColor: "rgba(24, 120, 240, 0.4)",
-        pointHoverBackgroundColor: "rgba(24, 120, 240, 1)",
-        pointHoverBorderColor: "rgba(24, 120, 240, 1)",
-        data: humidityData
+        data: distanceData
       }
     ]
   }
@@ -33,27 +22,19 @@ $(document).ready(function () {
   var basicOption = {
     title: {
       display: true,
-      text: 'Temperature & Humidity Real-time Data',
+      text: 'Distance Data',
       fontSize: 36
     },
     scales: {
       yAxes: [{
-        id: 'Temperature',
+        id: 'Distance',
         type: 'linear',
         scaleLabel: {
-          labelString: 'Temperature(C)',
+          labelString: 'Distance',
           display: true
         },
         position: 'left',
-      }, {
-          id: 'Humidity',
-          type: 'linear',
-          scaleLabel: {
-            labelString: 'Humidity(%)',
-            display: true
-          },
-          position: 'right'
-        }]
+      }]
     }
   }
 
@@ -74,24 +55,17 @@ $(document).ready(function () {
     console.log('receive message' + message.data);
     try {
       var obj = JSON.parse(message.data);
-      if(!obj.time || !obj.temperature) {
+      if(!obj.published_at || !obj.data) {
         return;
       }
-      timeData.push(obj.time);
-      temperatureData.push(obj.temperature);
+      timeData.push(obj.published_at);
+      distanceData.push(obj.data);
       // only keep no more than 50 points in the line chart
       const maxLen = 50;
       var len = timeData.length;
       if (len > maxLen) {
         timeData.shift();
-        temperatureData.shift();
-      }
-
-      if (obj.humidity) {
-        humidityData.push(obj.humidity);
-      }
-      if (humidityData.length > maxLen) {
-        humidityData.shift();
+        distanceData.shift();
       }
 
       myLineChart.update();
